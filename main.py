@@ -104,6 +104,10 @@ class Note:
         print("Note Saved!")
         self.show_notes()
 
+        # Clearing the data on the tab.
+        self.title_text.delete(0., END)
+        self.edit_text.delete(0., END)
+
     def delete_note(self):
         title = self.title_text.get(0., END)[:-1]
         confirm = messagebox.askokcancel(title="Delete", message=f"Do you want to delete note? \n{title}")
