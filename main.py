@@ -30,7 +30,7 @@ class Note:
         self.frm_button.grid(row=0, column=0, sticky="nsew", rowspan=2)
 
         # Save Button
-        self.save_btn = Button(text=" Save ", bg="#8EC3B0", command=self.save_data)
+        self.save_btn = Button(text=" Save ", bg="#8EC3B0", command=self.save_note)
         self.save_btn.grid(row=0, column=2, sticky="nswe")
 
         # Delete Button
@@ -40,7 +40,7 @@ class Note:
         self.show_notes()
         # Scrollbar
         scrollbar = Scrollbar(orient=VERTICAL, command=self.edit_text.yview)
-        scrollbar.grid(row=1, column=3, sticky=N+S+E)
+        scrollbar.grid(row=1, column=3, sticky=N + S + E)
 
         self.edit_text.config(yscrollcommand=scrollbar.set)
 
@@ -92,7 +92,7 @@ class Note:
 
         self.window.update()
 
-    def save_data(self):
+    def save_note(self):
         title = self.title_text.get(0., END)[0:-1]
         text = self.edit_text.get(0., END)[0:-1]
 
@@ -101,18 +101,27 @@ class Note:
         with open(f"data/{title}.txt", "w") as file:
             file.write(text)
 
+        print("Note Saved!")
         self.show_notes()
 
     def delete_note(self):
         title = self.title_text.get(0., END)[:-1]
         confirm = messagebox.askokcancel(title="Delete", message=f"Do you want to delete note? \n{title}")
         if confirm:
-            os.remove(f"data/{title}.txt")
-            print("File Deleted!")
-            self.notes_dict.pop(title)
-            with open("data/notes_name.txt", "w") as file:
-                for note in self.notes_dict:
-                    file.write(f"{note}\n")
+            try:
+                os.remove(f"data/{title}.txt")
+            except FileNotFoundError:
+                print(f"Note {title} is not saved.")
+            else:
+                print("Note Deleted!")
+                self.notes_dict.pop(title)
+                with open("data/notes_name.txt", "w") as file:
+                    for note in self.notes_dict:
+                        file.write(f"{note}\n")
+
+            # Clearing the data on the tab.
+            self.title_text.delete(0., END)
+            self.edit_text.delete(0., END)
         self.update()
         self.show_notes()
 
